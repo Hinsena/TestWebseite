@@ -12,7 +12,7 @@
     }
 
     header {
-      background-color: #2e8b57; /* Grün */
+      background-color: #2e8b57;
       color: white;
       padding: 20px 0;
       text-align: center;
@@ -30,7 +30,7 @@
 
     h2 {
       text-align: center;
-      color: #2e8b57; /* Grün */
+      color: #2e8b57;
     }
 
     label {
@@ -54,14 +54,14 @@
       margin-top: 20px;
       border: none;
       border-radius: 5px;
-      background-color: #2e8b57; /* Grün */
+      background-color: #2e8b57;
       color: white;
       font-size: 16px;
       cursor: pointer;
     }
 
     button:hover {
-      background-color: #256b45; /* dunkleres Grün */
+      background-color: #256b45;
     }
 
     .error {
@@ -73,33 +73,32 @@
     .screen { display: none; }
     .active { display: block; }
 
-    /* ===== NEU: Flex Container für Form + Info Box ===== */
-    .main-container { /* NEU */
-      display: flex; /* NEU */
-      justify-content: center; /* NEU */
-      align-items: flex-start; /* NEU */
-      gap: 30px; /* NEU Abstand zwischen Form und Info Box */ 
-      max-width: 900px; /* NEU */
-      margin: 50px auto; /* NEU */
+    /* ===== Flex Container für Form + Info Box ===== */
+    .main-container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 30px;
+      max-width: 900px;
+      margin: 50px auto;
     }
 
-    /* ===== NEU: Info Box rechts ===== */
-    .info-box { /* NEU */
-      width: 300px; /* NEU */
-      background-color: #fff4ff; /* NEU */
-      border: 1px solid #d49bf7; /* NEU */
-      border-radius: 10px; /* NEU */
-      padding: 20px; /* NEU */
-      color: #4b0082; /* NEU */
-      font-size: 14px; /* NEU */
-      line-height: 1.5; /* NEU */
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* NEU */
+    /* ===== Info Box rechts ===== */
+    .info-box {
+      width: 300px;
+      background-color: #fff4ff;
+      border: 1px solid #d49bf7;
+      border-radius: 10px;
+      padding: 20px;
+      color: #4b0082;
+      font-size: 14px;
+      line-height: 1.5;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
 
-    /* ===== NEU: Responsive für kleine Bildschirme ===== */
-    @media (max-width: 800px) { /* NEU */
-      .main-container { flex-direction: column; align-items: center; } /* NEU */
-      .info-box { width: 90%; margin-top: 20px; } /* NEU */
+    @media (max-width: 800px) {
+      .main-container { flex-direction: column; align-items: center; }
+      .info-box { width: 90%; margin-top: 20px; }
     }
   </style>
 </head>
@@ -109,7 +108,7 @@
 
 <!-- Registrierung + Info Box -->
 <div id="registerScreen" class="screen active">
-  <div class="main-container"> <!-- NEU: Flex Container -->
+  <div class="main-container">
 
     <!-- Registrierung Formular -->
     <div class="container">
@@ -126,18 +125,18 @@
       <p class="error" id="regError"></p>
     </div>
 
-    <!-- NEU: Info Box rechts -->
-    <div class="info-box"> <!-- NEU -->
+    <!-- Info Box rechts -->
+    <div class="info-box">
       <strong>Benutzername soll Ihr Muttercode sein:</strong>
       <ul>
         <li>Die ersten beiden Buchstaben des Vornamens der Mutter</li>
         <li>Die letzten beiden Buchstaben des eigenen Geburtsorts</li>
-        <li>Der Geburtsmonat des Vaters als Zahl (Bsp.: Januar = 01)</li>
+        <li>Der Geburtsmonat des Vaters als Zahl (z. B. Januar = 01)</li>
         <li>Der letzte Buchstabe des eigenen Vornamens</li>
       </ul>
-    </div> <!-- NEU Ende Info Box -->
+    </div>
 
-  </div> <!-- Ende Flex Container -->
+  </div>
 </div>
 
 <!-- Login Screen -->
@@ -167,24 +166,72 @@
 
 <script>
 const siteName = "Demo Webseite"; 
-let startTime = null;
 let regAttempts = 0;
 let loginAttempts = 0;
 
+// Fake Users für Demo
+const demoUsers = new Map();
+
+// ---------------------------
+// Screen wechseln
+// ---------------------------
 function show(screenId) {
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
   document.getElementById(screenId).classList.add("active");
-  if (startTime === null) startTime = performance.now();
 }
 
-document.getElementById("goToLoginBtn").onclick = () => {
+// ---------------------------
+// Registrierung Demo
+// ---------------------------
+document.getElementById("registerForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  regAttempts++;
+
+  const username = e.target.username.value;
+  const password = e.target.password.value;
+  const passwordConfirm = e.target.passwordConfirm.value;
+
+  if (password !== passwordConfirm) {
+    document.getElementById("regError").textContent = "Die Passwörter stimmen nicht überein!";
+    return;
+  }
+
+  // User speichern
+  demoUsers.set(username, password);
+  e.target.reset();
+  document.getElementById("regError").textContent = "";
+
+  // Erfolgs-Screen zeigen
+  show("successScreen");
+});
+
+// ---------------------------
+// Button: Weiter zum Login
+// ---------------------------
+document.getElementById("goToLoginBtn").addEventListener("click", () => {
   document.getElementById("loginForm").reset();
   document.getElementById("loginError").textContent = "";
-  loginAttempts = 0; 
   show("loginScreen");
-};
+});
 
-// Registrierung und Login wie vorher...
+// ---------------------------
+// Login Demo
+// ---------------------------
+document.getElementById("loginForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  loginAttempts++;
+
+  const username = e.target.username.value;
+  const password = e.target.password.value;
+
+  if (demoUsers.get(username) === password) {
+    e.target.reset();
+    document.getElementById("loginError").textContent = "";
+    show("loginSuccessScreen");
+  } else {
+    document.getElementById("loginError").textContent = "Login fehlgeschlagen! Bitte erneut versuchen.";
+  }
+});
 </script>
 
 </body>
