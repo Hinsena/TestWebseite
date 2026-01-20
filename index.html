@@ -4,13 +4,11 @@
   <meta charset="utf-8">
   <title>DEMO Webseite</title>
   <style>
-    /* ===== Demo Design ===== */
     body {
       margin: 0;
       font-family: "Arial", sans-serif;
       background-color: #f0f8f5;
     }
-
     header {
       background-color: #2e8b57;
       color: white;
@@ -19,7 +17,6 @@
       font-size: 28px;
       font-weight: bold;
     }
-
     .container {
       max-width: 400px;
       margin: 50px auto;
@@ -28,18 +25,8 @@
       padding: 30px;
       box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
-
-    h2 {
-      text-align: center;
-      color: #2e8b57;
-    }
-
-    label {
-      display: block;
-      margin-top: 15px;
-      font-weight: bold;
-    }
-
+    h2 { text-align: center; color: #2e8b57; }
+    label { display: block; margin-top: 15px; font-weight: bold; }
     input {
       width: 100%;
       padding: 10px;
@@ -48,7 +35,6 @@
       border: 1px solid #ccc;
       box-sizing: border-box;
     }
-
     button {
       width: 100%;
       padding: 12px;
@@ -60,21 +46,10 @@
       font-size: 16px;
       cursor: pointer;
     }
-
-    button:hover {
-      background-color: #256b45;
-    }
-
-    .error {
-      color: red;
-      margin-top: 10px;
-      text-align: center;
-    }
-
+    button:hover { background-color: #256b45; }
+    .error { color: red; margin-top: 10px; text-align: center; }
     .screen { display: none; }
     .active { display: block; }
-
-    /* ===== Flex Container für Form + Info Box ===== */
     .main-container {
       display: flex;
       justify-content: center;
@@ -83,8 +58,6 @@
       max-width: 900px;
       margin: 50px auto;
     }
-
-    /* ===== Info Box rechts ===== */
     .info-box {
       width: 300px;
       background-color: #fff4ff;
@@ -96,7 +69,6 @@
       line-height: 1.5;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
-
     @media (max-width: 800px) {
       .main-container { flex-direction: column; align-items: center; }
       .info-box { width: 90%; margin-top: 20px; }
@@ -111,22 +83,23 @@
 <div id="registerScreen" class="screen active">
   <div class="main-container">
 
-    <!-- Registrierung Formular -->
     <div class="container">
       <h2>Registrierung</h2>
       <form id="registerForm">
         <label>Username</label>
-        <input name="username" required>
+        <input name="username" autocomplete="username" required>
+
         <label>Passwort</label>
-        <input name="password" type="password" required>
+        <input name="password" type="password" autocomplete="new-password" required>
+
         <label>Passwort wiederholen</label>
-        <input name="passwordConfirm" type="password" required>
-        <button>Registrieren</button>
+        <input name="passwordConfirm" type="password" autocomplete="off" required>
+
+        <button type="submit">Registrieren</button>
       </form>
       <p class="error" id="regError"></p>
     </div>
 
-    <!-- Info Box rechts -->
     <div class="info-box">
       <strong>Benutzername soll Ihr Muttercode sein:</strong>
       <ul>
@@ -145,9 +118,9 @@
   <h2>Login</h2>
   <form id="loginForm">
     <label>Username</label>
-    <input name="username" required>
+    <input name="username" autocomplete="username" required>
     <label>Passwort</label>
-    <input name="password" type="password" required>
+    <input name="password" type="password" autocomplete="current-password" required>
     <button>Login</button>
   </form>
   <p class="error" id="loginError"></p>
@@ -166,28 +139,16 @@
 </div>
 
 <script>
-const siteName = "Demo Webseite"; 
-let regAttempts = 0;
-let loginAttempts = 0;
-
-// Fake Users für Demo
 const demoUsers = new Map();
 
-// ---------------------------
-// Screen wechseln
-// ---------------------------
 function show(screenId) {
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
   document.getElementById(screenId).classList.add("active");
 }
 
-// ---------------------------
-// Registrierung Demo
-// ---------------------------
+// Registrierung
 document.getElementById("registerForm").addEventListener("submit", (e) => {
   e.preventDefault();
-  regAttempts++;
-
   const username = e.target.username.value;
   const password = e.target.password.value;
   const passwordConfirm = e.target.passwordConfirm.value;
@@ -197,31 +158,29 @@ document.getElementById("registerForm").addEventListener("submit", (e) => {
     return;
   }
 
-  // User speichern
   demoUsers.set(username, password);
   e.target.reset();
   document.getElementById("regError").textContent = "";
 
-  // Erfolgs-Screen zeigen
+  // Chrome/Edge triggern Passwortvorschlag:
+  // Ein kurzes Timeout und Fokus auf Passwortfeld
+  setTimeout(() => {
+    e.target.password.focus();
+  }, 100);
+
   show("successScreen");
 });
 
-// ---------------------------
-// Button: Weiter zum Login
-// ---------------------------
+// Weiter zum Login
 document.getElementById("goToLoginBtn").addEventListener("click", () => {
   document.getElementById("loginForm").reset();
   document.getElementById("loginError").textContent = "";
   show("loginScreen");
 });
 
-// ---------------------------
-// Login Demo
-// ---------------------------
+// Login
 document.getElementById("loginForm").addEventListener("submit", (e) => {
   e.preventDefault();
-  loginAttempts++;
-
   const username = e.target.username.value;
   const password = e.target.password.value;
 
